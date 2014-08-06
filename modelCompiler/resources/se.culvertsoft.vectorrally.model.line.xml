@@ -1,0 +1,15 @@
+<Module>
+    <Enums> </Enums>
+    <Types>
+
+        <Line extends="MapObject">
+            <startPosition type="Vector2" />
+            <endPosition type="Vector2" />
+        </Line>
+
+        <Wall extends="Line" />
+        <Start extends="Line" />
+        <Goal extends="Line" />
+
+    </Types>
+</Module>

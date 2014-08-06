@@ -1,0 +1,16 @@
+<Project>
+
+    <Generator name="Java">
+        <class_path>se.culvertsoft.mgen.javapack.generator.JavaGenerator</class_path>
+        <output_path>src</output_path>
+        <classregistry_path>se.culvertsoft.vectorrally.model</classregistry_path>
+    </Generator>
+
+    <Sources parser="se.culvertsoft.mgen.idlparser.IdlParser">
+        <Source>se.culvertsoft.vectorrally.model.xml</Source>
+        <Source>se.culvertsoft.vectorrally.model.util.xml</Source>
+        <Source>se.culvertsoft.vectorrally.model.line.xml</Source>
+        <Source>se.culvertsoft.vectorrally.model.entity.xml</Source>
+    </Sources>
+
+</Project>

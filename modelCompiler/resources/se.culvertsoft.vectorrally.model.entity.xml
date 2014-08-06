@@ -1,0 +1,16 @@
+<Module>
+    <Enums> </Enums>
+    <Types>
+
+        <Entity extends="MapObject">
+            <position type="Vector2" />
+        </Entity>
+
+        <Car extends="Entity">
+            <player type="string" />
+            <currentVelocity type="Vector2" />
+            <wantedPosition type="Vector2" />
+        </Car>
+
+    </Types>
+</Module>

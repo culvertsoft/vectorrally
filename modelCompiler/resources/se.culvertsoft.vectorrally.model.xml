@@ -1,0 +1,19 @@
+<Module>
+    <Enums> </Enums>
+    <Types>
+
+        <Game>
+            <Players type="int32" />
+            <map type="Map" />
+        </Game>
+
+        <Map>
+            <Width type="int32" />
+            <Height type="int32" />
+            <objects type="list[MapObject]" />
+        </Map>
+
+		<MapObject />
+
+    </Types>
+</Module>

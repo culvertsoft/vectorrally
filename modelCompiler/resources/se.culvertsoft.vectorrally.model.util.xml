@@ -1,0 +1,9 @@
+<Module>
+    <Enums> </Enums>
+    <Types>
+        <Vector2>
+            <x type="int32"/>
+            <y type="int32"/>
+        </Vector2>
+    </Types>
+</Module>
