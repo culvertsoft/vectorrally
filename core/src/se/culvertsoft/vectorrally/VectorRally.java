@@ -31,7 +31,7 @@ public class VectorRally extends com.badlogic.gdx.Game {
 		Map map = new Map(10, 10, mo);
 		gameWorld = new Game(1, map);
 
-		this.setScreen(new MainGameScreen(this));
+		this.setScreen(new MenuScreen(this));
 	}
 
 	public void render() {
