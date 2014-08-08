@@ -1,0 +1,38 @@
+<Module>
+	<Enums>
+        <connected>
+            <no />
+            <pending />
+            <yes />
+        </connected>
+    </Enums>
+
+	<Types>
+
+		<Wish />
+
+		<ConnectWish extends="Wish">
+			<player type="string" />
+			<connected type="connected" />
+		</ConnectWish>
+		
+		<StartWish extends="Wish">
+			
+		</StartWish>
+		
+		<MapWish exteds="Wish">
+			<map type="Map" />
+		</MapWish>
+		
+		<MoveWish extends="Wish" >
+			<player type="string" />
+			<to type="Vector2" />
+		</MoveWish>
+		
+		<DisconnectWish extends="Wish">
+			<player type="string" />
+		</DisconnectWish>
+
+
+	</Types>
+</Module>
