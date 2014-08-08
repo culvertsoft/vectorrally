@@ -35,6 +35,10 @@ project(":model-compiler"){
     dependencies {
         runtime group: 'se.culvertsoft', name: 'mgen-javagenerator', version: 'SNAPSHOT'
     }
+    compileJava.outputs.upToDateWhen { false }
+    compileJava.doLast {
+        run.execute()
+    }
 }
 
 project(":desktop") {

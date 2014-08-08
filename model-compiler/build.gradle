@@ -16,6 +16,7 @@ eclipse.project {
     name = appName + "-model-compiler"
 }
 
-build.doLast {
-	run.execute()
+compileJava.outputs.upToDateWhen { false }
+compileJava.doLast {
+    run.execute()
 }
