@@ -29,9 +29,16 @@ allprojects {
     }
 }
 
-project(":desktop") {
+project(":model-compiler"){
     apply plugin: "java"
 
+    dependencies {
+        runtime group: 'se.culvertsoft', name: 'mgen-javagenerator', version: 'SNAPSHOT'
+    }
+}
+
+project(":desktop") {
+    apply plugin: "java"
 
     dependencies {
         compile project(":core")
@@ -64,7 +71,6 @@ project(":html") {
     apply plugin: "gwt"
     apply plugin: "war"
 
-
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
@@ -83,13 +89,13 @@ project(":html") {
 project(":core") {
     apply plugin: "java"
 
-
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:1.0.1"
         compile "com.badlogicgames.box2dlights:box2dlights:1.2"
+        runtime group: 'se.culvertsoft', name: 'mgen-javalib', version: 'SNAPSHOT'
     }
 }
 

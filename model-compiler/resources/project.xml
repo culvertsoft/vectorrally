@@ -2,7 +2,7 @@
 
     <Generator name="Java">
         <class_path>se.culvertsoft.mgen.javapack.generator.JavaGenerator</class_path>
-        <output_path>src</output_path>
+        <output_path>src_generated</output_path>
         <classregistry_path>se.culvertsoft.vectorrally.model</classregistry_path>
     </Generator>
 

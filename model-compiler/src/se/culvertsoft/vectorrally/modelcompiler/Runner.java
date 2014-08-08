@@ -1,3 +1,5 @@
+package se.culvertsoft.vectorrally.modelcompiler;
+
 import se.culvertsoft.mgen.compiler.MGenCompiler;
 
 

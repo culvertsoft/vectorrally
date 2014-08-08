@@ -9,8 +9,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 
 public class MainGameScreen implements Screen {
 
@@ -53,15 +51,15 @@ public class MainGameScreen implements Screen {
 		for (MapObject o : game.gameWorld.getMap().getObjects()) {
 
 			if (o instanceof Car) {
-				Car car = (Car) o;
-				game.batch.draw(carTexture, car.getPosition().getX(), car
-						.getPosition().getY());
-			}
-			if (o instanceof Wall) {
-				Wall wall = (Wall) o;
-				game.batch.draw(wallTexture, wall.getStartPosition().getX(),
-						wall.getStartPosition().getY());
-			}
+			 	Car car = (Car) o;
+			 	game.batch.draw(carTexture, car.getPosition().getX(), car
+			 			.getPosition().getY());
+			 }
+			 if (o instanceof Wall) {
+			 	Wall wall = (Wall) o;
+			 	game.batch.draw(wallTexture, wall.getStartPosition().getX(),
+			 			wall.getStartPosition().getY());
+			 }
 
 		}
 		game.batch.end();

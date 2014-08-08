@@ -61,3 +61,6 @@ build/
 
 ## OS Specific
 .DS_Store
+
+## Mgen source
+src_generated/
