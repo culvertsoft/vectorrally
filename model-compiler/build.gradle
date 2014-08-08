@@ -1,4 +1,11 @@
 apply plugin: "java"
+apply plugin: "application"
+
+dependencies {
+    compile group: 'se.culvertsoft', name: 'mgen-javagenerator', version: 'SNAPSHOT'
+}
+
+mainClassName = "se.culvertsoft.vectorrally.modelcompiler.Runner"
 
 sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -7,4 +14,8 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 
 eclipse.project {
     name = appName + "-model-compiler"
+}
+
+build.doLast {
+	run.execute()
 }
