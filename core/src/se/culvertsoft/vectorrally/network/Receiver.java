@@ -5,16 +5,19 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import se.culvertsoft.mgen.javapack.serialization.JsonReader;
+import se.culvertsoft.vectorrally.model.ClassRegistry;
 import se.culvertsoft.vectorrally.model.wish.Wish;
 
 public class Receiver extends Thread {
 
 	private Socket socket = null;
-	private ConcurrentLinkedQueue<Wish> recevied_wishes = null;
+	private ConcurrentLinkedQueue<Wish> receviedWishes = null;
 	private DataInputStream streamIn = null;
+	private boolean stop = false;
 
-	public Receiver(ConcurrentLinkedQueue<Wish> recevied_wishes, Socket socket) {
-		this.recevied_wishes = recevied_wishes;
+	public Receiver(ConcurrentLinkedQueue<Wish> receviedWishes, Socket socket) {
+		this.receviedWishes = receviedWishes;
 		this.socket = socket;
 		open();
 		start();
@@ -28,20 +31,24 @@ public class Receiver extends Thread {
 		}
 	}
 
-	public void close() {
-		try {
-			if (streamIn != null)
-				streamIn.close();
-		} catch (IOException ioe) {
-			System.out.println("Error closing input stream: " + ioe);
-		}
+	public void kill() {
+		this.stop = true;
 	}
 
 	public void run() {
-		while (true) {
+		if (stop) {
 			try {
-				//read data and put in received wishes.
-				streamIn.read();
+				streamIn.close();
+			} catch (IOException e) {
+				System.out.println("closing error: " + e.getMessage());
+			}
+		}
+		while (!stop) {
+			try {
+				ClassRegistry cr = new ClassRegistry();
+				JsonReader jr = new JsonReader(streamIn, cr);
+				// read data and put in received wishes.
+				receviedWishes.add(jr.readObject(Wish.class));
 			} catch (IOException ioe) {
 				System.out.println("Listening error: " + ioe.getMessage());
 			}
