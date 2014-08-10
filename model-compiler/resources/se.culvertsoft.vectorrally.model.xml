@@ -1,15 +1,32 @@
 <Module>
-    <Enums> </Enums>
+    <Enums> 
+    	<ScreenState>
+    		<main />
+    		<lobby />
+    		<game />
+    	</ScreenState>
+    	<GameState>
+    		<starting />
+    		<selection />
+    		<animation />
+    		<ending />
+    	</GameState>
+    </Enums>
     <Types>
-
+		<Model>
+			<game type="Game" />
+			<screenState type="ScreenState" />
+		</Model>
+		
         <Game>
-            <Players type="int32" />
+        	<gameState type="GameState" />
+            <players type="int32" />
             <map type="Map" />
         </Game>
 
         <Map>
-            <Width type="int32" />
-            <Height type="int32" />
+            <width type="int32" />
+            <height type="int32" />
             <objects type="list[MapObject]" />
         </Map>
 

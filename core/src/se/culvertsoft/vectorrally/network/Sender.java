@@ -12,7 +12,7 @@ import se.culvertsoft.vectorrally.model.wish.Wish;
 public class Sender extends Thread {
 	private DataOutputStream streamOut = null;
 	private Receiver receiver = null;
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	private ConcurrentLinkedQueue<Wish> sendWishes;
 	private JsonWriter jw;
 

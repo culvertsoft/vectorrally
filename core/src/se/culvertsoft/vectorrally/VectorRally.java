@@ -3,10 +3,15 @@ package se.culvertsoft.vectorrally;
 import java.util.ArrayList;
 
 import se.culvertsoft.vectorrally.model.Game;
+import se.culvertsoft.vectorrally.model.GameState;
 import se.culvertsoft.vectorrally.model.Map;
 import se.culvertsoft.vectorrally.model.MapObject;
+import se.culvertsoft.vectorrally.model.Model;
+import se.culvertsoft.vectorrally.model.ScreenState;
 import se.culvertsoft.vectorrally.model.entity.Car;
 import se.culvertsoft.vectorrally.model.util.Vector2;
+import se.culvertsoft.vectorrally.model.wish.Wish;
+import se.culvertsoft.vectorrally.network.Network;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,8 +21,10 @@ public class VectorRally extends com.badlogic.gdx.Game {
 	BitmapFont font;
 	Game gameWorld;
 	String myName = "Player 1";
+	private Model model;
 
 	public void create() {
+		Network.initialize("localhost", 1337);
 		batch = new SpriteBatch();
 		// Use LibGDX's default Arial font.
 		font = new BitmapFont();
@@ -29,13 +36,18 @@ public class VectorRally extends com.badlogic.gdx.Game {
 				new Vector2(3, 1)));
 		
 		Map map = new Map(10, 10, mo);
-		gameWorld = new Game(1, map);
+		gameWorld = new Game(GameState.starting, 1, map);
+		
+		model = new Model(gameWorld, ScreenState.main);
 
 		this.setScreen(new MenuScreen(this));
 	}
-
+	
 	public void render() {
-		super.render(); // important!
+		while(Network.hasWishes()){
+			Network.getWish().applyTo(model);
+		}
+		super.render();
 	}
 
 	public void dispose() {

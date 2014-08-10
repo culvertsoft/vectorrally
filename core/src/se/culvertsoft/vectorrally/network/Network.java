@@ -28,8 +28,12 @@ public class Network {
 	public static void sendWish(Wish w) {
 		Network.sendWishes.add(w);
 	}
+	
+	public static boolean hasWishes(){
+		return !receivedWishes.isEmpty();
+	}
 
-	public static Wish getWishes() {
+	public static Wish getWish() {
 		return receivedWishes.poll();
 	}
 

@@ -12,7 +12,7 @@ import se.culvertsoft.vectorrally.model.wish.Wish;
 public class Receiver extends Thread {
 
 	private ConcurrentLinkedQueue<Wish> receviedWishes = null;
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	private JsonReader jr;
 	private DataInputStream streamIn;
 
