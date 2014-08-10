@@ -11,21 +11,17 @@ import se.culvertsoft.vectorrally.model.wish.Wish;
 
 public class Receiver extends Thread {
 
-	private Socket socket = null;
 	private ConcurrentLinkedQueue<Wish> receviedWishes = null;
-	private DataInputStream streamIn = null;
 	private boolean stop = false;
+	private JsonReader jr;
+	private DataInputStream streamIn;
 
 	public Receiver(ConcurrentLinkedQueue<Wish> receviedWishes, Socket socket) {
 		this.receviedWishes = receviedWishes;
-		this.socket = socket;
-		open();
-		start();
-	}
-
-	public void open() {
 		try {
 			streamIn = new DataInputStream(socket.getInputStream());
+			ClassRegistry cr = new ClassRegistry();
+			jr = new JsonReader(streamIn, cr);
 		} catch (IOException ioe) {
 			System.out.println("Error getting input stream: " + ioe);
 		}
@@ -45,9 +41,6 @@ public class Receiver extends Thread {
 		}
 		while (!stop) {
 			try {
-				ClassRegistry cr = new ClassRegistry();
-				JsonReader jr = new JsonReader(streamIn, cr);
-				// read data and put in received wishes.
 				receviedWishes.add(jr.readObject(Wish.class));
 			} catch (IOException ioe) {
 				System.out.println("Listening error: " + ioe.getMessage());

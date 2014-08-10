@@ -14,11 +14,14 @@ public class Sender extends Thread {
 	private Receiver receiver = null;
 	private boolean stop = false;
 	private ConcurrentLinkedQueue<Wish> sendWishes;
+	private JsonWriter jw;
 
 	public Sender(ConcurrentLinkedQueue<Wish> sendWishes, Socket socket) {
 		this.sendWishes = sendWishes;
 		try {
 			streamOut = new DataOutputStream(socket.getOutputStream());
+			ClassRegistry cr = new ClassRegistry();
+			jw = new JsonWriter(streamOut, cr);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -30,10 +33,7 @@ public class Sender extends Thread {
 		while (!stop) {
 			if(sendWishes.size() > 0){
 				try {
-					Wish w = sendWishes.poll();
-					ClassRegistry cr = new ClassRegistry();
-					JsonWriter jw = new JsonWriter(streamOut, cr);
-					jw.writeObject(w);
+					jw.writeObject(sendWishes.poll());
 				} catch (IOException ioe) {
 					System.out.println("Sending error: " + ioe.getMessage());
 				}
