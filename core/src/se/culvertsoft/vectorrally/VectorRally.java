@@ -45,7 +45,7 @@ public class VectorRally extends com.badlogic.gdx.Game {
 	
 	public void render() {
 		while(Network.hasWishes()){
-			Network.getWish().applyTo(model);
+			//Network.getWish().applyTo(model);
 		}
 		super.render();
 	}
