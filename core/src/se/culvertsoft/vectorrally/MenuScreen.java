@@ -1,8 +1,10 @@
 package se.culvertsoft.vectorrally;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
@@ -25,10 +27,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuScreen extends AbstractScreen {
 
-	private static final float REFRESH_INTERVAL = 10;
-	private float lastServerCallCounter = 0;
+	private static final float REFRESH_INTERVAL = 1;
+	private float lastServerCallCounter = 10;
 	private ServerIpList sil;
 	private List<ReportedServerIp> serverList;
+	private CompletableFuture<ServerIpList> future;
 	private static ClassRegistry cr = new ClassRegistry();
 	private static JsonReader jr = new JsonReader(cr);
 
@@ -64,29 +67,42 @@ public class MenuScreen extends AbstractScreen {
 
 	@Override
 	public void render(float delta) {
+		super.render(delta);
 		lastServerCallCounter += delta;
 		if (lastServerCallCounter > REFRESH_INTERVAL) {
 			lastServerCallCounter = 0;
+
+			future = CompletableFuture
+					.supplyAsync(new Supplier<ServerIpList>() {
+						@Override
+						public ServerIpList get() {
+							try {
+								DefaultHttpClient client = new DefaultHttpClient();
+								HttpGet request = new HttpGet(
+										"http://xn--smst-loa.se/vectorrally.php");
+
+								HttpResponse response = client.execute(request);
+								HttpEntity entity = response.getEntity();
+								String content = EntityUtils.toString(entity);
+
+								System.out.println(content);
+
+								return jr.readObject(content,
+										ServerIpList.class);
+							} catch (IOException | HttpException
+									| URISyntaxException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							return sil;
+						}
+					});
+
+		}
+		if (future.isDone()) {
 			try {
-				DefaultHttpClient client = new DefaultHttpClient();
-				HttpGet request = new HttpGet(
-						"https://xn--smst-loa.se/vectorrally.php");
-
-				HttpResponse response = client.execute(request);
-				HttpEntity entity = response.getEntity();
-				String content = EntityUtils.toString(entity);
-				sil = jr.readObject(content, ServerIpList.class);
-
-				serverList.setItems(sil.getServer().toArray(
-						new ReportedServerIp[sil.getServer().size()]));
-				
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-			} catch (HttpException e) {
+				sil = future.get();
+			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
 		}

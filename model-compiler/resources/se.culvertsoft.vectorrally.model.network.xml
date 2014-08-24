@@ -37,7 +37,7 @@
 		</ChatMessage>
 		
 		<ServerIpList>
-			<server type="list[ReportedServerIp]" />
+			<servers type="list[ReportedServerIp]" />
 		</ServerIpList>
 		
 		<ReportedServerIp>
