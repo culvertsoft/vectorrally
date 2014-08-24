@@ -21,7 +21,7 @@
 		</StartWish>
 		
 		<MapWish exteds="Wish">
-			<map type="Map" />
+			<map type="GameMap" />
 		</MapWish>
 		
 		<MoveWish extends="Wish" >

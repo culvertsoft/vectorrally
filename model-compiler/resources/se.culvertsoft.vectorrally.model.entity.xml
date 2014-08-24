@@ -2,8 +2,9 @@
     <Enums> </Enums>
     <Types>
 
-        <Entity extends="MapObject">
+        <Entity>
             <position type="Vector2" />
+            <rotation type="float" />
         </Entity>
 
         <Car extends="Entity">
@@ -11,6 +12,10 @@
             <currentVelocity type="Vector2" />
             <wantedPosition type="Vector2" />
         </Car>
+        
+        <Wall extends="Entity" />
+        <Start extends="Entity" />
+        <Goal extends="Entity" />
 
     </Types>
 </Module>

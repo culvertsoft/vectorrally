@@ -9,7 +9,6 @@
     <Sources parser="se.culvertsoft.mgen.idlparser.IdlParser">
         <Source>se.culvertsoft.vectorrally.model.xml</Source>
         <Source>se.culvertsoft.vectorrally.model.util.xml</Source>
-        <Source>se.culvertsoft.vectorrally.model.line.xml</Source>
         <Source>se.culvertsoft.vectorrally.model.entity.xml</Source>
         <Source>se.culvertsoft.vectorrally.model.wish.xml</Source>
     </Sources>
