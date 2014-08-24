@@ -36,5 +36,13 @@
 			<text type="string"/>
 		</ChatMessage>
 		
+		<ServerIpList>
+			<server type="list[ReportedServerIp]" />
+		</ServerIpList>
+		
+		<ReportedServerIp>
+			<ip type="string" />
+			<ts type="string" />
+		</ReportedServerIp>
 	</Types>
 </Module>

@@ -3,7 +3,6 @@ package se.culvertsoft.vectorrally;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
@@ -14,8 +13,11 @@ import org.apache.http.util.EntityUtils;
 
 import se.culvertsoft.mgen.javapack.serialization.JsonReader;
 import se.culvertsoft.vectorrally.model.ClassRegistry;
+import se.culvertsoft.vectorrally.model.network.ReportedServerIp;
+import se.culvertsoft.vectorrally.model.network.ServerIpList;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -25,6 +27,8 @@ public class MenuScreen extends AbstractScreen {
 
 	private static final float REFRESH_INTERVAL = 10;
 	private float lastServerCallCounter = 0;
+	private ServerIpList sil;
+	private List<ReportedServerIp> serverList;
 	private static ClassRegistry cr = new ClassRegistry();
 	private static JsonReader jr = new JsonReader(cr);
 
@@ -42,9 +46,8 @@ public class MenuScreen extends AbstractScreen {
 		table.setWidth(width);
 		table.setHeight(height);
 
-		List<String> list = new List<>(getSkin());
-
-		stage.addActor(list);
+		serverList = new List<>(getSkin());
+		stage.addActor(serverList);
 		stage.addActor(table);
 
 		TextButton startGameButton = new TextButton("Start game", skin);
@@ -72,7 +75,11 @@ public class MenuScreen extends AbstractScreen {
 				HttpResponse response = client.execute(request);
 				HttpEntity entity = response.getEntity();
 				String content = EntityUtils.toString(entity);
+				sil = jr.readObject(content, ServerIpList.class);
 
+				serverList.setItems(sil.getServer().toArray(
+						new ReportedServerIp[sil.getServer().size()]));
+				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
