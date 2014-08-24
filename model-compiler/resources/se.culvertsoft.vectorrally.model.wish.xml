@@ -26,7 +26,7 @@
 		
 		<MoveWish extends="Wish" >
 			<player type="string" />
-			<to type="Vector2" />
+			<to type="Vec2" />
 		</MoveWish>
 		
 		<DisconnectWish extends="Wish">
