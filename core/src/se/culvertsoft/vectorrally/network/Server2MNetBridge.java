@@ -1,7 +1,6 @@
 package se.culvertsoft.vectorrally.network;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import se.culvertsoft.mgen.javapack.classes.MGenBase;
 import se.culvertsoft.mnet.DataMessage;
@@ -14,9 +13,11 @@ import se.culvertsoft.mnet.client.MNetClient;
 
 public class Server2MNetBridge extends MNetClient {
 
-	Server2MNetBridge(ConcurrentLinkedQueue<Visitor<Server>> inputQue) {
+	private final NetworkInterface m_networkInterface;
+
+	Server2MNetBridge(NetworkInterface networkInterface) {
 		super(new WebsockBackendSettings(), new NodeSettings());
-		m_inputQue = inputQue;
+		m_networkInterface = networkInterface;
 	}
 
 	public void send(MGenBase msg, boolean binary, Route target) {
@@ -34,17 +35,19 @@ public class Server2MNetBridge extends MNetClient {
 
 	@Override
 	public void handleConnect(Route route) {
-		m_inputQue.add(server -> server.handleConnect(route));
+		m_networkInterface.queueAction(server -> server.handleConnect(route));
 	}
 
 	@Override
 	public void handleDisconnect(Route route, String reason) {
-		m_inputQue.add(server -> server.handleDisconnect(route, reason));
+		m_networkInterface.queueAction(server -> server.handleDisconnect(route,
+				reason));
 	}
 
 	@Override
 	public void handleError(Exception error, Object source) {
-		m_inputQue.add(server -> server.handleError(error, source));
+		m_networkInterface.queueAction(server -> server.handleError(error,
+				source));
 	}
 
 	@Override
@@ -58,13 +61,12 @@ public class Server2MNetBridge extends MNetClient {
 				} else {
 					msg = Serializer.read(dm.getStringData());
 				}
-				m_inputQue.add(server -> server.handleMessage(msg, route));
+				m_networkInterface.queueAction(server -> server.handleMessage(
+						msg, route));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	private final ConcurrentLinkedQueue<Visitor<Server>> m_inputQue;
 
 }
