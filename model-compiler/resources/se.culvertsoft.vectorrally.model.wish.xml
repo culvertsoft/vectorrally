@@ -1,9 +1,9 @@
 <Module>
 	<Enums>
         <connected>
-            <no />
-            <pending />
-            <yes />
+            <NO />
+            <PENDING />
+            <YES />
         </connected>
     </Enums>
 
@@ -20,7 +20,7 @@
 			
 		</StartWish>
 		
-		<MapWish exteds="Wish">
+		<MapWish extends="Wish">
 			<map type="GameMap" />
 		</MapWish>
 		

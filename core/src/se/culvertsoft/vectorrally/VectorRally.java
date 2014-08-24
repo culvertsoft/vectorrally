@@ -8,6 +8,7 @@ import se.culvertsoft.vectorrally.model.GameState;
 import se.culvertsoft.vectorrally.model.Model;
 import se.culvertsoft.vectorrally.model.ScreenState;
 import se.culvertsoft.vectorrally.model.entity.Car;
+import se.culvertsoft.vectorrally.model.entity.CarColor;
 import se.culvertsoft.vectorrally.model.entity.Entity;
 import se.culvertsoft.vectorrally.model.util.Vector2;
 import se.culvertsoft.vectorrally.network.Network;
@@ -30,15 +31,16 @@ public class VectorRally extends com.badlogic.gdx.Game {
 		font = new BitmapFont();
 		ArrayList<Entity> mo = new ArrayList<>();
 		mo.add(new Car(new Vector2(0, 0), 0, myName, new Vector2(0, 0),
-				new Vector2(0, 0)));
+				new Vector2(0, 0), CarColor.RED));
 
 		mo.add(new Car(new Vector2(2, 2), 0, "Other Player", new Vector2(2, 2),
-				new Vector2(3, 1)));
+				new Vector2(3, 1), CarColor.YELLOW));
 
-		GameMap map = new GameMap(10, 10, mo);
-		gameWorld = new Game(GameState.starting, 1, map);
+		GameMap map = new GameMap();
+		map.setObjects(mo);
+		gameWorld = new Game(GameState.STARTING, 1, map);
 
-		model = new Model(gameWorld, ScreenState.main);
+		model = new Model(gameWorld, ScreenState.MAIN);
 
 		this.setScreen(new MenuScreen(this));
 	}

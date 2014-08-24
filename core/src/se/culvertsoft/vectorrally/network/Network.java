@@ -8,8 +8,8 @@ import se.culvertsoft.vectorrally.model.wish.Wish;
 
 public class Network {
 	private static Receiver receiver;
-	private static ConcurrentLinkedQueue<Wish> sendWishes;
-	private static ConcurrentLinkedQueue<Wish> receivedWishes;
+	private static ConcurrentLinkedQueue<Wish> sendWishes = new ConcurrentLinkedQueue<Wish>();
+	private static ConcurrentLinkedQueue<Wish> receivedWishes = new ConcurrentLinkedQueue<Wish>();
 	private static Sender sender;
 
 	public static void initialize(String serverName, int serverPort) {
@@ -28,8 +28,8 @@ public class Network {
 	public static void sendWish(Wish w) {
 		Network.sendWishes.add(w);
 	}
-	
-	public static boolean hasWishes(){
+
+	public static boolean hasWishes() {
 		return !receivedWishes.isEmpty();
 	}
 

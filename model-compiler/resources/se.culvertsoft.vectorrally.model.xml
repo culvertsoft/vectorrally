@@ -1,15 +1,15 @@
 <Module>
     <Enums> 
     	<ScreenState>
-    		<main />
-    		<lobby />
-    		<game />
+    		<MAIN />
+    		<LOBBY />
+    		<GAME />
     	</ScreenState>
     	<GameState>
-    		<starting />
-    		<selection />
-    		<animation />
-    		<ending />
+    		<STARTING />
+    		<SELECTION />
+    		<ANIMATION />
+    		<ENDING />
     	</GameState>
     </Enums>
     <Types>
@@ -25,8 +25,8 @@
         </Game>
 
         <GameMap>
-            <width type="int32" />
-            <height type="int32" />
+            <width type="int32">11</width>
+            <height type="int32">9</height>
             <objects type="list[Entity]" />
         </GameMap>
     </Types>
