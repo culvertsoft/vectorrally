@@ -4,7 +4,15 @@ apply plugin: "eclipse"
 sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.java.srcDirs = [ "src/", "src_generated" ]
+sourceSets {
+  main {
+    java {
+      srcDirs += "src_generated"
+      srcDirs += "src"
+    }
+  }
+}
+
 
 eclipse.project {
     name = appName + "-core"
