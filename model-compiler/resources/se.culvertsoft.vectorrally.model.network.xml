@@ -1,0 +1,24 @@
+<Module>
+	<Types>
+	
+		<Player>
+			<name type="string">unnamed_player</name>
+			<carColor type="CarColor"/>
+		</Player>
+	
+		<PlayerCheckinRequest>
+			<player type="Player" flags="required"/>
+		</PlayerCheckinRequest>
+		
+		<PlayerCheckinReply>
+			<player type="Player"/>
+			<result type="bool"/>
+			<failReason type="string"/>
+		</PlayerCheckinReply>
+	
+		<WishList>
+			<wishes type="list[Wish]">[]</wishes>
+		</WishList>
+		
+	</Types>
+</Module>

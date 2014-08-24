@@ -15,7 +15,6 @@
         </Entity>
 
         <Car extends="Entity">
-            <player type="string" />
             <currentVelocity type="Vector2" />
             <wantedPosition type="Vector2" />
             <color type="CarColor" />
