@@ -1,5 +1,9 @@
 package se.culvertsoft.vectorrally;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
 import se.culvertsoft.vectorrally.model.GameMap;
 import se.culvertsoft.vectorrally.model.entity.Car;
 import se.culvertsoft.vectorrally.model.entity.CarColor;
@@ -7,6 +11,7 @@ import se.culvertsoft.vectorrally.model.entity.Entity;
 import se.culvertsoft.vectorrally.model.entity.Goal;
 import se.culvertsoft.vectorrally.model.entity.Select;
 import se.culvertsoft.vectorrally.model.entity.Start;
+import se.culvertsoft.vectorrally.model.entity.Wall;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -47,15 +52,14 @@ public class MainGameScreen implements Screen {
 	public MainGameScreen(VectorRally vr) {
 		this.game = vr;
 
-		redCarTexture = new Texture("red-car.png");
-		blueCarTexture = new Texture("blue-car.png");
-		purpleCarTexture = new Texture("purple-car.png");
-		yellowCarTexture = new Texture("yellow-car.png");
-		wallTexture = new Texture("wall.png");
-		goalTexture = new Texture("goal.png");
-		startTexture = new Texture("start.png");
-		selectTexture = new Texture("select.png");
-		selectTexture = new Texture("select.png");
+		redCarTexture = new Texture("entities/cars/red-car.png");
+		blueCarTexture = new Texture("entities/cars/blue-car.png");
+		purpleCarTexture = new Texture("entities/cars/purple-car.png");
+		yellowCarTexture = new Texture("entities/cars/yellow-car.png");
+		wallTexture = new Texture("entities/wall.png");
+		goalTexture = new Texture("entities/goal.png");
+		startTexture = new Texture("entities/start.png");
+		selectTexture = new Texture("entities/select.png");
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),
@@ -98,6 +102,9 @@ public class MainGameScreen implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 
 		game.batch.begin();
+
+		Collections.sort(game.gameWorld.getMap().getObjects(),
+				new EntityComparator());
 
 		for (Entity ent : game.gameWorld.getMap().getObjects()) {
 			drawEntity(ent);
@@ -160,5 +167,28 @@ public class MainGameScreen implements Screen {
 	@Override
 	public void dispose() {
 
+	}
+
+	public static class EntityComparator implements Comparator<Entity> {
+
+		private static final HashMap<Class<? extends Entity>, Integer> sortOrder = new HashMap<>();
+
+		public EntityComparator() {
+			sortOrder.put(Select.class, Integer.valueOf(2));
+			sortOrder.put(Car.class, Integer.valueOf(1));
+			sortOrder.put(Wall.class, Integer.valueOf(0));
+			sortOrder.put(Goal.class, Integer.valueOf(0));
+			sortOrder.put(Start.class, Integer.valueOf(0));
+		}
+
+		@Override
+		public int compare(Entity o1, Entity o2) {
+			if (!sortOrder.containsKey(o1.getClass())) {
+				throw new RuntimeException("missing class "
+						+ o1.getClass().toString());
+			}
+
+			return sortOrder.get(o1.getClass()) - sortOrder.get(o2.getClass());
+		}
 	}
 }
