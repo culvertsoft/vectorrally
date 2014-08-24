@@ -20,5 +20,21 @@
 			<wishes type="list[Wish]">[]</wishes>
 		</WishList>
 		
+		<PlayerList>
+			<players type="list[Player]"/>
+		</PlayerList>
+		
+		<PlayerJoinedMessage>
+			<player type="Player"/>
+		</PlayerJoinedMessage>
+		
+		<PlayerLeftMessage>
+			<player type="Player"/>
+		</PlayerLeftMessage>
+		
+		<ChatMessage>
+			<text type="string"/>
+		</ChatMessage>
+		
 	</Types>
 </Module>
