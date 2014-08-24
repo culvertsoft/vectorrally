@@ -15,11 +15,10 @@ import org.apache.http.util.EntityUtils;
 
 import se.culvertsoft.mgen.javapack.serialization.JsonReader;
 import se.culvertsoft.vectorrally.model.ClassRegistry;
-import se.culvertsoft.vectorrally.model.network.ReportedServerIp;
 import se.culvertsoft.vectorrally.model.network.ServerIpList;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -30,8 +29,9 @@ public class MenuScreen extends AbstractScreen {
 	private static final float REFRESH_INTERVAL = 1;
 	private float lastServerCallCounter = 10;
 	private ServerIpList sil;
-	private List<ReportedServerIp> serverList;
+	private SelectBox<ServerIpList> serverList;
 	private CompletableFuture<ServerIpList> future;
+	private Table table;
 	private static ClassRegistry cr = new ClassRegistry();
 	private static JsonReader jr = new JsonReader(cr);
 
@@ -45,12 +45,10 @@ public class MenuScreen extends AbstractScreen {
 
 		Skin skin = super.getSkin();
 
-		Table table = new Table(getSkin());
+		table = new Table(getSkin());
 		table.setWidth(width);
 		table.setHeight(height);
 
-		serverList = new List<>(getSkin());
-		stage.addActor(serverList);
 		stage.addActor(table);
 
 		TextButton startGameButton = new TextButton("Start game", skin);
@@ -60,7 +58,8 @@ public class MenuScreen extends AbstractScreen {
 				vr.setScreen(new MainGameScreen(vr));
 			}
 		});
-
+		serverList = new SelectBox<ServerIpList>(getSkin());
+		table.add(serverList);
 		table.add(startGameButton);
 		table.validate();
 	}
@@ -102,6 +101,8 @@ public class MenuScreen extends AbstractScreen {
 		if (future.isDone()) {
 			try {
 				sil = future.get();
+				serverList.validate();
+				table.validate();
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
