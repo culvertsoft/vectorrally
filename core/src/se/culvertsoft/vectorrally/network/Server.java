@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import se.culvertsoft.mgen.javapack.classes.MGenBase;
 import se.culvertsoft.mnet.api.Route;
-import se.culvertsoft.vectorrally.model.Dispatcher;
-import se.culvertsoft.vectorrally.model.Handler;
 import se.culvertsoft.vectorrally.model.entity.CarColor;
 import se.culvertsoft.vectorrally.model.network.ChatMessage;
 import se.culvertsoft.vectorrally.model.network.Player;
@@ -20,7 +17,7 @@ import se.culvertsoft.vectorrally.model.network.PlayerLeftMessage;
 import se.culvertsoft.vectorrally.model.network.PlayerList;
 import se.culvertsoft.vectorrally.model.wish.Wish;
 
-public class Server extends Handler {
+public class Server extends NetworkInterface {
 
 	/********************************************************
 	 * 
@@ -29,11 +26,8 @@ public class Server extends Handler {
 	 * 
 	 *******************************************************/
 
-	private final ConcurrentLinkedQueue<Visitor<Server>> m_queuedNetworkActions;
 	private final Server2MNetBridge m_mnet;
 	private final HashMap<Route, Player> m_players;
-	private Route currentRoute = null; // The route we're currently processing a
-										// message from
 
 	/********************************************************
 	 * 
@@ -43,8 +37,7 @@ public class Server extends Handler {
 	 *******************************************************/
 
 	public Server() {
-		m_queuedNetworkActions = new ConcurrentLinkedQueue<>();
-		m_mnet = new Server2MNetBridge(m_queuedNetworkActions);
+		m_mnet = new Server2MNetBridge(this);
 		m_players = new HashMap<>();
 	}
 
@@ -97,12 +90,6 @@ public class Server extends Handler {
 		return broadcast(msg, false);
 	}
 
-	public Server flushActions() {
-		for (Visitor<Server> action : m_queuedNetworkActions)
-			action.accept(this);
-		return this;
-	}
-
 	/********************************************************
 	 * 
 	 * 
@@ -110,18 +97,21 @@ public class Server extends Handler {
 	 * 
 	 *******************************************************/
 
+	@Override
 	protected void handle(Wish o) {
 		// TODO: Add to current wishlist,
 		// TODO: When step is called, push current wishlist to clients
 	}
 
+	@Override
 	protected void handle(ChatMessage o) {
 		broadcast(o);
 	}
 
+	@Override
 	protected void handle(PlayerCheckinRequest o) {
 
-		final boolean isNewPlayer = m_players.remove(currentRoute) == null;
+		final boolean isNewPlayer = m_players.remove(currentRoute()) == null;
 
 		final CarColor firstFreeCarColor = firstFreeCarColor();
 		if (firstFreeCarColor == null) {
@@ -131,7 +121,7 @@ public class Server extends Handler {
 		}
 
 		Player player = o.hasPlayer() ? o.getPlayer() : new Player();
-		
+
 		if (!player.hasName()) {
 			player.setName(UUID.randomUUID().toString());
 		}
@@ -140,16 +130,64 @@ public class Server extends Handler {
 			player.setCarColor(firstFreeCarColor);
 		}
 
-		m_players.put(currentRoute, player);
+		m_players.put(currentRoute(), player);
 
 		reply(new PlayerCheckinReply().setPlayer(player).setResult(true));
-		
+
 		if (isNewPlayer) {
 			broadcast(new PlayerJoinedMessage(player));
 		}
-		
+
 		broadcastUpdatedPlayerList();
 
+	}
+
+	/********************************************************
+	 * 
+	 * 
+	 * PRIVATE IMPL. Executed on flushActions
+	 * 
+	 *******************************************************/
+
+	@Override
+	void handleConnect(Route route) {
+		System.out
+				.println("Route "
+						+ route
+						+ " connected. Waiting for him to check in before doing anything...");
+	}
+
+	@Override
+	void handleDisconnect(Route route, String reason) {
+		Player player = m_players.remove(route);
+		if (player != null) {
+			broadcast(new PlayerLeftMessage(player));
+		}
+	}
+
+	@Override
+	void handleError(Exception error, Object source) {
+		System.out.println("Server error " + error + " from " + source);
+	}
+
+	/********************************************************
+	 * 
+	 * 
+	 * PRIVATE HELPERS.
+	 * 
+	 *******************************************************/
+
+	private Server send(MGenBase msg, boolean bnry, final Route route) {
+		m_mnet.send(msg, bnry, route);
+		return this;
+	}
+
+	private Server reply(MGenBase msg, boolean bnry) {
+		return send(msg, bnry, currentRoute());
+	}
+
+	private Server reply(MGenBase msg) {
+		return reply(msg, false);
 	}
 
 	private void broadcastUpdatedPlayerList() {
@@ -172,49 +210,6 @@ public class Server extends Handler {
 			}
 		}
 		return null;
-	}
-
-	/********************************************************
-	 * 
-	 * 
-	 * PRIVATE IMPL. Executed on flushActions
-	 * 
-	 *******************************************************/
-
-	private Server send(MGenBase msg, boolean bnry, final Route route) {
-		m_mnet.send(msg, bnry, route);
-		return this;
-	}
-
-	private Server reply(MGenBase msg, boolean bnry) {
-		return send(msg, bnry, currentRoute);
-	}
-
-	private Server reply(MGenBase msg) {
-		return reply(msg, false);
-	}
-
-	void handleConnect(Route route) {
-		System.out
-				.println("Route "
-						+ route
-						+ " connected. Waiting for him to check in before doing anything...");
-	}
-
-	void handleDisconnect(Route route, String reason) {
-		Player player = m_players.remove(route);
-		if (player != null) {
-			broadcast(new PlayerLeftMessage(player));
-		}
-	}
-
-	void handleMessage(MGenBase msg, Route route) {
-		currentRoute = route;
-		Dispatcher.dispatch(msg, this);
-	}
-
-	void handleError(Exception error, Object source) {
-		System.out.println("Server error " + error + " from " + source);
 	}
 
 }
