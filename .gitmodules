@@ -1,0 +1,3 @@
+[submodule "externals/mnet"]
+	path = externals/mnet
+	url = git://github.com/culvertsoft/mnet
