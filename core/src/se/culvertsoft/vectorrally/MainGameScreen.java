@@ -12,8 +12,10 @@ import se.culvertsoft.vectorrally.model.entity.Goal;
 import se.culvertsoft.vectorrally.model.entity.Select;
 import se.culvertsoft.vectorrally.model.entity.Start;
 import se.culvertsoft.vectorrally.model.entity.Wall;
+import se.culvertsoft.vectorrally.model.util.Vec2;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -78,6 +80,19 @@ public class MainGameScreen implements Screen {
 
 		GameMap map = game.gameWorld.getMap();
 
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+			Vec2 wantedPos = new Vec2(Gdx.input.getX() / SPACING,
+					(Gdx.graphics.getHeight() - Gdx.input.getY()) / SPACING);
+			for (Entity e : map.getObjects()) {
+				if (e instanceof Car) {
+					Car car = (Car) e;
+					if (car.getColor() == game.myColor) {
+						car.setPosition(wantedPos);
+					}
+				}
+			}
+		}
+
 		// TMP draw lines, change to texture later.
 
 		sr.setColor(Color.WHITE);
@@ -117,6 +132,10 @@ public class MainGameScreen implements Screen {
 		Texture text = null;
 		if (ent instanceof Car) {
 			Car c = (Car) ent;
+			if (c.getColor() == game.myColor) {
+				// TODO: do car wish handling?
+				// drawWishSelectArea(car);
+			}
 			if (CarColor.RED == c.getColor()) {
 				text = redCarTexture;
 			} else if (CarColor.BLUE == c.getColor()) {
@@ -173,7 +192,7 @@ public class MainGameScreen implements Screen {
 
 		private static final HashMap<Class<? extends Entity>, Integer> sortOrder = new HashMap<>();
 
-		public EntityComparator() {
+		static {
 			sortOrder.put(Select.class, Integer.valueOf(2));
 			sortOrder.put(Car.class, Integer.valueOf(1));
 			sortOrder.put(Wall.class, Integer.valueOf(0));

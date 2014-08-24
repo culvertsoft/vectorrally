@@ -10,13 +10,13 @@
     <Types>
 
         <Entity>
-            <position type="Vector2" />
+            <position type="Vec2" />
             <rotation type="float" />
         </Entity>
 
         <Car extends="Entity">
-            <currentVelocity type="Vector2" />
-            <wantedPosition type="Vector2" />
+            <currentVelocity type="Vec2" />
+            <wantedPosition type="Vec2" />
             <color type="CarColor" />
         </Car>
         
