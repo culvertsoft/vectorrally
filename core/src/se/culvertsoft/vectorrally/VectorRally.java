@@ -14,7 +14,6 @@ import se.culvertsoft.vectorrally.model.entity.Goal;
 import se.culvertsoft.vectorrally.model.entity.Start;
 import se.culvertsoft.vectorrally.model.entity.Wall;
 import se.culvertsoft.vectorrally.model.util.Vec2;
-import se.culvertsoft.vectorrally.network.Network;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,7 +27,7 @@ public class VectorRally extends com.badlogic.gdx.Game {
 
 	@Override
 	public void create() {
-		Network.initialize("localhost", 1337);
+		// TODO: add some network stuff? Network.initialize("localhost", 1337);
 		batch = new SpriteBatch();
 		// Use LibGDX's default Arial font.
 		font = new BitmapFont();
@@ -85,9 +84,9 @@ public class VectorRally extends com.badlogic.gdx.Game {
 
 	@Override
 	public void render() {
-		while (Network.hasWishes()) {
+		//while (Network.hasWishes()) {
 			// Network.getWish().applyTo(model);
-		}
+		//}
 		super.render();
 	}
 

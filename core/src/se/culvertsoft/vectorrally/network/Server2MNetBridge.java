@@ -14,7 +14,7 @@ import se.culvertsoft.mnet.client.MNetClient;
 
 public class Server2MNetBridge extends MNetClient {
 
-	Server2MNetBridge(ConcurrentLinkedQueue<QueuedNetworkAction> inputQue) {
+	Server2MNetBridge(ConcurrentLinkedQueue<Visitor<Server>> inputQue) {
 		super(new WebsockBackendSettings(), new NodeSettings());
 		m_inputQue = inputQue;
 	}
@@ -65,6 +65,6 @@ public class Server2MNetBridge extends MNetClient {
 		}
 	}
 
-	private final ConcurrentLinkedQueue<QueuedNetworkAction> m_inputQue;
+	private final ConcurrentLinkedQueue<Visitor<Server>> m_inputQue;
 
 }

@@ -29,7 +29,7 @@ public class Server extends Handler {
 	 * 
 	 *******************************************************/
 
-	private final ConcurrentLinkedQueue<QueuedNetworkAction> m_queuedNetworkActions;
+	private final ConcurrentLinkedQueue<Visitor<Server>> m_queuedNetworkActions;
 	private final Server2MNetBridge m_mnet;
 	private final HashMap<Route, Player> m_players;
 	private Route currentRoute = null; // The route we're currently processing a
@@ -98,8 +98,8 @@ public class Server extends Handler {
 	}
 
 	public Server flushActions() {
-		for (QueuedNetworkAction action : m_queuedNetworkActions)
-			action.applyTo(this);
+		for (Visitor<Server> action : m_queuedNetworkActions)
+			action.accept(this);
 		return this;
 	}
 
@@ -136,11 +136,7 @@ public class Server extends Handler {
 			player.setName(UUID.randomUUID().toString());
 		}
 
-		if (!player.hasCarColor()) {
-			player.setCarColor(firstFreeCarColor);
-		}
-
-		if (!isColorAvailable(player.getCarColor())) {
+		if (!player.hasCarColor() || !isColorAvailable(player.getCarColor())) {
 			player.setCarColor(firstFreeCarColor);
 		}
 
