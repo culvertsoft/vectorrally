@@ -1,17 +1,21 @@
 package se.culvertsoft.vectorrally;
 
-import se.culvertsoft.vectorrally.model.MapObject;
 import se.culvertsoft.vectorrally.model.entity.Car;
-import se.culvertsoft.vectorrally.model.line.Wall;
+import se.culvertsoft.vectorrally.model.entity.Entity;
+import se.culvertsoft.vectorrally.model.entity.Wall;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class MainGameScreen implements Screen {
 
+	private final ShapeRenderer sr = new ShapeRenderer();
 	final private VectorRally game;
 	final Texture carTexture;
 	final Texture wallTexture;
@@ -19,8 +23,8 @@ public class MainGameScreen implements Screen {
 
 	public MainGameScreen(VectorRally vr) {
 		this.game = vr;
-		carTexture = new Texture("badlogic.jpg");
-		wallTexture = new Texture("badlogic.jpg");
+		carTexture = new Texture("car.jpeg");
+		wallTexture = new Texture("wall.jpeg");
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),
@@ -38,32 +42,35 @@ public class MainGameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-		// tell the camera to update its matrices.
 		camera.update();
-		// tell the SpriteBatch to render in the
-		// coordinate system specified by the camera.
 		game.batch.setProjectionMatrix(camera.combined);
 
-		// begin a new batch and draw the bucket and
-		// all drops
 		game.batch.begin();
 		game.font.draw(game.batch, "TXT", 0, 480);
-		for (MapObject o : game.gameWorld.getMap().getObjects()) {
 
-			if (o instanceof Car) {
-			 	Car car = (Car) o;
-			 	game.batch.draw(carTexture, car.getPosition().getX(), car
-			 			.getPosition().getY());
-			 }
-			 if (o instanceof Wall) {
-			 	Wall wall = (Wall) o;
-			 	game.batch.draw(wallTexture, wall.getStartPosition().getX(),
-			 			wall.getStartPosition().getY());
-			 }
+		// TMP draw lines, change to texture later.
+
+		sr.setColor(Color.BLACK);
+		sr.setProjectionMatrix(camera.combined);
+
+		sr.begin(ShapeType.Line);
+		sr.end();
+
+		for (Entity ent : game.gameWorld.getMap().getObjects()) {
+
+			if (ent instanceof Car) {
+				Car car = (Car) ent;
+				game.batch.draw(carTexture, car.getPosition().getX(), car
+						.getPosition().getY());
+			}
+			if (ent instanceof Wall) {
+				Wall wall = (Wall) ent;
+				game.batch.draw(wallTexture, wall.getPosition().getX(), wall
+						.getPosition().getY());
+			}
 
 		}
 		game.batch.end();
-
 	}
 
 	@Override

@@ -21,16 +21,13 @@
         <Game>
         	<gameState type="GameState" />
             <players type="int32" />
-            <map type="Map" />
+            <map type="GameMap" />
         </Game>
 
-        <Map>
+        <GameMap>
             <width type="int32" />
             <height type="int32" />
-            <objects type="list[MapObject]" />
-        </Map>
-
-		<MapObject />
-
+            <objects type="list[Entity]" />
+        </GameMap>
     </Types>
 </Module>
