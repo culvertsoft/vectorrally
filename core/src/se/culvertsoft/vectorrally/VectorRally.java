@@ -8,6 +8,7 @@ import se.culvertsoft.vectorrally.model.GameMap;
 import se.culvertsoft.vectorrally.model.GameState;
 import se.culvertsoft.vectorrally.model.Model;
 import se.culvertsoft.vectorrally.model.ScreenState;
+import se.culvertsoft.vectorrally.model.entity.Car;
 import se.culvertsoft.vectorrally.model.entity.CarColor;
 import se.culvertsoft.vectorrally.model.entity.Entity;
 import se.culvertsoft.vectorrally.model.entity.Goal;
@@ -76,11 +77,10 @@ public class VectorRally extends com.badlogic.gdx.Game {
 	}
 
 	private void createCars(List<Entity> entities) {
-		// entities.add(new Car(new Vec2(0, 0), 0, "IT'S ME.", new Vec2(0, 1),
-		// new Vec2(0, 1), myColor));
-		// entities.add(new Car(new Vec2(1, 0), 0, "Other Player", new Vec2(1,
-		// 1),
-		// new Vec2(1, 1), CarColor.PURPLE));
+		entities.add(new Car(new Vec2(0, 0), 0, new Vec2(0, 1), new Vec2(0, 1),
+				myColor));
+		entities.add(new Car(new Vec2(1, 0), 0, new Vec2(1, 1), new Vec2(1, 1),
+				CarColor.PURPLE));
 	}
 
 	@Override
