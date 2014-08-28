@@ -77,13 +77,11 @@ public abstract class NetworkInterface extends Handler {
 	}
 
 	NetworkInterface start() {
-		flushActions();
 		m_mnet.start();
 		return this;
 	}
 
 	NetworkInterface stop() {
-		flushActions();
 		m_mnet.stop();
 		return this;
 	}
