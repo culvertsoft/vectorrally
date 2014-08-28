@@ -169,11 +169,11 @@ public class Server extends NetworkInterface {
 	}
 
 	private boolean isColorAvailable(CarColor carColor) {
-		return !contains(players(), p -> p.getCarColor() == carColor);
+		return !£(players()).contains(p -> p.getCarColor() == carColor);
 	}
 
 	private Optional<CarColor> firstFreeCarColor() {
-		return head(filter(CarColor.values(), c -> isColorAvailable(c)));
+		return £(CarColor.values()).filter(x -> isColorAvailable(x)).headOption();
 	}
 
 }
