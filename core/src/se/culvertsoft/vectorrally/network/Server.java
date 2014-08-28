@@ -1,8 +1,14 @@
 package se.culvertsoft.vectorrally.network;
 
+import static se.culvertsoft.vectorrally.utils.Utils.contains;
+import static se.culvertsoft.vectorrally.utils.Utils.filter;
+import static se.culvertsoft.vectorrally.utils.Utils.find;
+import static se.culvertsoft.vectorrally.utils.Utils.head;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import se.culvertsoft.mgen.javapack.classes.MGenBase;
@@ -26,7 +32,6 @@ public class Server extends NetworkInterface {
 	 * 
 	 *******************************************************/
 
-	private final Server2MNetBridge m_mnet;
 	private final HashMap<Route, Player> m_players;
 
 	/********************************************************
@@ -37,19 +42,16 @@ public class Server extends NetworkInterface {
 	 *******************************************************/
 
 	public Server() {
-		m_mnet = new Server2MNetBridge(this);
 		m_players = new HashMap<>();
 	}
 
 	public Server start() {
-		flushActions();
-		m_mnet.start();
+		super.start();
 		return this;
 	}
 
 	public Server stop() {
-		flushActions();
-		m_mnet.stop();
+		super.stop();
 		return this;
 	}
 
@@ -58,15 +60,10 @@ public class Server extends NetworkInterface {
 		return m_players.values();
 	}
 
-	public Server send(MGenBase msg, boolean bnry, Player tg) {
+	public Server send(MGenBase msg, boolean bnry, Player player) {
 		flushActions();
-		if (tg != null) {
-			m_players
-					.entrySet()
-					.stream()
-					.filter(x -> x.getValue().getCarColor()
-							.equals(tg.getCarColor())).findFirst()
-					.ifPresent(x -> send(msg, bnry, x.getKey()));
+		if (player != null) {
+			getRouteTo(player).ifPresent(r -> send(msg, bnry, r));
 		} else {
 			send(msg, bnry, (Route) null);
 		}
@@ -74,26 +71,10 @@ public class Server extends NetworkInterface {
 		return this;
 	}
 
-	public Server send(MGenBase msg, boolean bnry) {
-		return send(msg, bnry, (Player) null);
-	}
-
-	public Server send(MGenBase msg) {
-		return send(msg, false);
-	}
-
-	public Server broadcast(MGenBase msg, boolean bnry) {
-		return send(msg, bnry);
-	}
-
-	public Server broadcast(MGenBase msg) {
-		return broadcast(msg, false);
-	}
-
 	/********************************************************
 	 * 
 	 * 
-	 * PRIVATE IMPL. Message handlers
+	 * Message handlers
 	 * 
 	 *******************************************************/
 
@@ -113,8 +94,8 @@ public class Server extends NetworkInterface {
 
 		final boolean isNewPlayer = m_players.remove(currentRoute()) == null;
 
-		final CarColor firstFreeCarColor = firstFreeCarColor();
-		if (firstFreeCarColor == null) {
+		final Optional<CarColor> freeCarColor = firstFreeCarColor();
+		if (!freeCarColor.isPresent()) {
 			reply(new PlayerCheckinReply().setResult(false).setFailReason(
 					"Server Full"));
 			return;
@@ -127,7 +108,7 @@ public class Server extends NetworkInterface {
 		}
 
 		if (!player.hasCarColor() || !isColorAvailable(player.getCarColor())) {
-			player.setCarColor(firstFreeCarColor);
+			player.setCarColor(freeCarColor.get());
 		}
 
 		m_players.put(currentRoute(), player);
@@ -145,7 +126,7 @@ public class Server extends NetworkInterface {
 	/********************************************************
 	 * 
 	 * 
-	 * PRIVATE IMPL. Executed on flushActions
+	 * Network action handlers
 	 * 
 	 *******************************************************/
 
@@ -173,21 +154,14 @@ public class Server extends NetworkInterface {
 	/********************************************************
 	 * 
 	 * 
-	 * PRIVATE HELPERS.
+	 * Helpers
 	 * 
 	 *******************************************************/
 
-	private Server send(MGenBase msg, boolean bnry, final Route route) {
-		m_mnet.send(msg, bnry, route);
-		return this;
-	}
-
-	private Server reply(MGenBase msg, boolean bnry) {
-		return send(msg, bnry, currentRoute());
-	}
-
-	private Server reply(MGenBase msg) {
-		return reply(msg, false);
+	private Optional<Route> getRouteTo(Player p) {
+		return find(m_players.entrySet(),
+				e -> e.getValue().getCarColor() == p.getCarColor()).map(
+				x -> x.getKey());
 	}
 
 	private void broadcastUpdatedPlayerList() {
@@ -195,21 +169,11 @@ public class Server extends NetworkInterface {
 	}
 
 	private boolean isColorAvailable(CarColor carColor) {
-		for (final Player p : players()) {
-			if (p.getCarColor().equals(carColor)) {
-				return false;
-			}
-		}
-		return true;
+		return !contains(players(), p -> p.getCarColor() == carColor);
 	}
 
-	private CarColor firstFreeCarColor() {
-		for (final CarColor color : CarColor.values()) {
-			if (isColorAvailable(color)) {
-				return color;
-			}
-		}
-		return null;
+	private Optional<CarColor> firstFreeCarColor() {
+		return head(filter(CarColor.values(), c -> isColorAvailable(c)));
 	}
 
 }
