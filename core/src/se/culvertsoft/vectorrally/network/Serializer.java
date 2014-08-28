@@ -36,9 +36,20 @@ public final class Serializer {
 		return jsonReader.readObject(msg);
 	}
 
+	public static synchronized <T extends MGenBase> T read(String msg,
+			Class<T> cls) throws IOException {
+		return jsonReader.readObject(msg, cls);
+	}
+
 	public static synchronized MGenBase read(byte[] msg) throws IOException {
 		return binaryReader.setInput(new ByteArrayInputStream(msg))
 				.readObject();
+	}
+
+	public static synchronized <T extends MGenBase> T read(byte[] msg,
+			Class<T> cls) throws IOException {
+		return binaryReader.setInput(new ByteArrayInputStream(msg)).readObject(
+				cls);
 	}
 
 	public static synchronized String wrtJson(MGenBase msg) throws IOException {

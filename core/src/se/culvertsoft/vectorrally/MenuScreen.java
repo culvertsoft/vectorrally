@@ -1,21 +1,12 @@
 package se.culvertsoft.vectorrally;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import se.culvertsoft.mgen.javapack.serialization.JsonReader;
-import se.culvertsoft.vectorrally.model.ClassRegistry;
+import se.culvertsoft.vectorrally.gui.ServerList;
 import se.culvertsoft.vectorrally.model.network.ServerIpList;
+import se.culvertsoft.vectorrally.model.network.ServerListItem;
+import se.culvertsoft.vectorrally.utils.RepeatedTimer;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -26,14 +17,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuScreen extends AbstractScreen {
 
-	private static final float REFRESH_INTERVAL = 1;
-	private float lastServerCallCounter = 10;
-	private ServerIpList sil;
-	private SelectBox<ServerIpList> serverList;
-	private CompletableFuture<ServerIpList> future;
+	private final RepeatedTimer serverListTimer = new RepeatedTimer(1);
+	private SelectBox<ServerListItem> serverList;
+	private CompletableFuture<ServerIpList> getServerListAction;
 	private Table table;
-	private static ClassRegistry cr = new ClassRegistry();
-	private static JsonReader jr = new JsonReader(cr);
 
 	public MenuScreen(VectorRally vr) {
 		super.setVr(vr);
@@ -58,7 +45,7 @@ public class MenuScreen extends AbstractScreen {
 				vr.setScreen(new MainGameScreen(vr));
 			}
 		});
-		serverList = new SelectBox<ServerIpList>(getSkin());
+		serverList = new SelectBox<ServerListItem>(getSkin());
 		table.add(serverList);
 		table.add(startGameButton);
 		table.validate();
@@ -67,46 +54,20 @@ public class MenuScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		lastServerCallCounter += delta;
-		if (lastServerCallCounter > REFRESH_INTERVAL) {
-			lastServerCallCounter = 0;
+		if (serverListTimer.poll()) {
+			if (getServerListAction == null) {
+				getServerListAction = ServerList.getIpList();
 
-			future = CompletableFuture
-					.supplyAsync(new Supplier<ServerIpList>() {
-						@Override
-						public ServerIpList get() {
-							try {
-								DefaultHttpClient client = new DefaultHttpClient();
-								HttpGet request = new HttpGet(
-										"http://xn--smst-loa.se/vectorrally.php");
-
-								HttpResponse response = client.execute(request);
-								HttpEntity entity = response.getEntity();
-								String content = EntityUtils.toString(entity);
-
-								System.out.println(content);
-
-								return jr.readObject(content,
-										ServerIpList.class);
-							} catch (IOException | HttpException
-									| URISyntaxException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							return sil;
-						}
-					});
-
-		}
-		if (future.isDone()) {
-			try {
-				sil = future.get();
-				serverList.validate();
-				table.validate();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
+			} else if (getServerListAction.isDone()) {
+				try {
+					ServerIpList ipList = getServerListAction.get();
+					serverList.validate();
+					table.validate();
+					getServerListAction = null;
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 }

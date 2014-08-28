@@ -11,7 +11,7 @@ public abstract class NetworkInterface extends Handler {
 
 	private final Server2MNetBridge m_mnet;
 	private final ConcurrentLinkedQueue<DeferredNetworkAction> m_queuedNetworkActions;
-	private boolean m_actionUnderWay = false;
+	private boolean m_flushUnderWay = false;
 	private Route m_currentRoute = null; // The route we're currently processing
 											// a
 											// message from
@@ -31,16 +31,15 @@ public abstract class NetworkInterface extends Handler {
 	public void flushActions() {
 
 		// Don't act on recursion...
-		if (m_actionUnderWay)
+		if (m_flushUnderWay)
 			return;
 
-		while (!m_queuedNetworkActions.isEmpty()) {
-			m_actionUnderWay = true;
-			try {
+		try {
+			m_flushUnderWay = true;
+			while (!m_queuedNetworkActions.isEmpty())
 				m_queuedNetworkActions.poll().applyTo(this);
-			} finally {
-				m_actionUnderWay = false;
-			}
+		} finally {
+			m_flushUnderWay = false;
 		}
 
 	}

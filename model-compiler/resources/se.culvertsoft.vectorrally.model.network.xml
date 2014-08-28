@@ -44,5 +44,11 @@
 			<ip type="string" />
 			<ts type="string" />
 		</ReportedServerIp>
+		
+		<ServerListItem>
+			<ip type="ReportedServerIp"/>
+			<name type="string"/>
+		</ServerListItem>
+		
 	</Types>
 </Module>
