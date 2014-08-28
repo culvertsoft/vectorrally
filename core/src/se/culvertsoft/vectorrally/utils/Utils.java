@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.badlogic.gdx.utils.Array;
+
 public class Utils {
 
 	public static <T> Optional<T> find(Iterable<T> ts, Function<T, Boolean> f) {
@@ -76,6 +78,14 @@ public class Utils {
 			return b == null;
 		else
 			return a == b || a.equals(b);
+	}
+
+	public <T> Array<T> convertListToArray(java.util.List<T> list) {
+		Array<T> t = new Array<T>(list.size());
+		for (T l : list) {
+			t.add(l);
+		}
+		return t;
 	}
 
 }

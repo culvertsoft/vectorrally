@@ -78,7 +78,7 @@ public class MenuScreen extends AbstractScreen {
 	}
 
 	public <T> Array<T> convertListToArray(java.util.List<T> list) {
-		Array<T> t = new Array<T>();
+		Array<T> t = new Array<T>(list.size());
 		for (T l : list) {
 			t.add(l);
 		}
