@@ -2,8 +2,8 @@ package se.culvertsoft.vectorrally.network;
 
 import static se.culvertsoft.vectorrally.utils.Utils.contains;
 import static se.culvertsoft.vectorrally.utils.Utils.filter;
-import static se.culvertsoft.vectorrally.utils.Utils.find;
 import static se.culvertsoft.vectorrally.utils.Utils.head;
+import static se.culvertsoft.vectorrally.utils.W.£;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -159,7 +159,7 @@ public class Server extends NetworkInterface {
 	 *******************************************************/
 
 	private Optional<Route> getRouteTo(Player p) {
-		return find(m_players.entrySet(),
+		return £(m_players.entrySet()).find(
 				e -> e.getValue().getCarColor() == p.getCarColor()).map(
 				x -> x.getKey());
 	}
