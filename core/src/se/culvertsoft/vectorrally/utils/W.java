@@ -1,5 +1,6 @@
 package se.culvertsoft.vectorrally.utils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -14,6 +15,10 @@ public class W<T, L extends Iterable<T>> {
 
 	public static <T, L extends Iterable<T>> W<T, L> £(final L ts) {
 		return new W<T, L>(ts);
+	}
+
+	public static <T> W<T, List<T>> £(final T[] ts) {
+		return £(Arrays.asList(ts));
 	}
 
 	public Optional<T> find(Function<T, Boolean> f) {
@@ -39,7 +44,7 @@ public class W<T, L extends Iterable<T>> {
 	public T head() {
 		return headOption().get();
 	}
-	
+
 	public L get() {
 		return m_ts;
 	}
